@@ -1,31 +1,34 @@
-console.log("logic.js");
+console.log("logic_1.js");
 
-let theMap = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+var theMap = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution:
     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 });
 
 let myMap = L.map("map", {
-  center: [37.6, -95.665],
-  zoom: 4.6,
-  //layers:[theMap]
+  center: [40.7, -94.5],
+  zoom: 5,
+  // layers:[ topo, theMap]
 });
 
 theMap.addTo(myMap);
 
 let baseMaps = {
-  "Street": theMap,
-  
+  Street: theMap,
 };
 
-// Create an overlay object to hold our overlay.
-let overlayMaps = {
-  Earthquakes: earthquakes
+let earthquakes = new L.LayerGroup();
+
+let overlays = {
+  Earthquakes: earthquakes,
 };
 
-L.control.layers(baseMaps, overlays, { collapsed: flase }).addTo(myMap);
+L.control.layers(baseMaps, overlays, { collapsed: false }).addTo(myMap);
 
-d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson").then(function(data) {
+d3.json(
+  "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson"
+).then(function (data) {
+
   function styleInfo(feature) {
     return {
       opacity: 1,
@@ -34,7 +37,7 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
       color: "#000000",
       radius: getRadius(feature.properties.mag),
       stroke: true,
-      weight: 0.5
+      weight: 0.5,
     };
   }
 
@@ -85,6 +88,4 @@ d3.json("https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geoj
   }).addTo(earthquakes);
 
   earthquakes.addTo(myMap);
-
 });
-  
