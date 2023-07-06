@@ -1,6 +1,6 @@
 console.log("logic_1.js");
 
-var theMap = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
+let theMap = L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
   attribution:
     '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
 });
@@ -28,7 +28,6 @@ L.control.layers(baseMaps, overlays, { collapsed: false }).addTo(myMap);
 d3.json(
   "https://earthquake.usgs.gov/earthquakes/feed/v1.0/summary/all_week.geojson"
 ).then(function (data) {
-
   function styleInfo(feature) {
     return {
       opacity: 1,
@@ -88,4 +87,37 @@ d3.json(
   }).addTo(earthquakes);
 
   earthquakes.addTo(myMap);
+
+  // Create map legend to provide context for map data
+  let legend = L.control({ position: "bottomright" });
+
+  legend.onAdd = function () {
+    var div = L.DomUtil.create("div", "info legend");
+    var grades = [10, 30, 50, 70, 90];
+    var labels = [];
+    var legendInfo = "<h4>Magnitude</h4>";
+
+    div.innerHTML = legendInfo;
+
+    // go through each magnitude item to label and color the legend
+    // push to labels array as list item
+    for (var i = 0; i < grades.length; i++) {
+      labels.push(
+        '<ul style="background-color:' +
+          chooseColor(grades[i] + 1) +
+          '"> <span>' +
+          grades[i] +
+          (grades[i + 1] ? "&ndash;" + grades[i + 1] + "" : "+") +
+          "</span></ul>"
+      );
+    }
+
+    // add each label list item to the div under the <ul> tag
+    div.innerHTML += "<ul>" + labels.join("") + "</ul>";
+
+    return div;    
+  };
+
+  //legend.addTo(myMap);
+
 });
